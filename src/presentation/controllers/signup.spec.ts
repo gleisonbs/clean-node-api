@@ -3,12 +3,14 @@ import { SignUpController } from './signup'
 describe('SignUp Controller', () => {
   let email
   let password
+  let name
   beforeEach(() => {
+    name = 'Test User'
     email = 'test.user@email.com'
     password = 'test.password'
   })
 
-  it('Should return 400 if no name is provided', async () => {
+  it('Should return 400 if name is not provided', async () => {
     const sut = new SignUpController()
     const httpRequest = {
       body: {
@@ -20,5 +22,19 @@ describe('SignUp Controller', () => {
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new Error('Missing param: name'))
+  })
+
+  it('Should return 400 if email is not provided', async () => {
+    const sut = new SignUpController()
+    const httpRequest = {
+      body: {
+        name,
+        password,
+        passwordConfirmation: password
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new Error('Missing param: email'))
   })
 })
