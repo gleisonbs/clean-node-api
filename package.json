@@ -22,7 +22,7 @@
     "typescript": "^4.1.3"
   },
   "scripts": {
-    "test": "jest",
-    "test:staged": "yarn test --findRelatedTests"
+    "test": "jest --passWithNoTests",
+    "test:staged": "yarn test"
   }
 }
