@@ -23,9 +23,9 @@ const makeSut = (): SutTypes => {
 }
 
 describe('SignUp Controller', () => {
-  let email
-  let password
-  let name
+  let email: string
+  let password: string
+  let name: string
   beforeEach(() => {
     name = 'Test User'
     email = 'test.user@email.com'
@@ -86,6 +86,21 @@ describe('SignUp Controller', () => {
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissingParamError('passwordConfirmation'))
+  })
+
+  it('Should return 400 if password confirmation is different from password', async () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        name,
+        email,
+        password,
+        passwordConfirmation: `invalid ${password}`
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new InvalidParamError('passwordConfirmation'))
   })
 
   it('Should return 400 if an invalid email is provided', async () => {
