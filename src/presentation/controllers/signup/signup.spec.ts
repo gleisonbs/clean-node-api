@@ -2,6 +2,11 @@ import { IAccountModel, IAddAccount, IAddAccountModel, IEmailValidator } from '.
 import { SignUpController } from './signup'
 import { InvalidParamError, MissingParamError, ServerError } from '../../errors'
 
+let id: string
+let email: string
+let password: string
+let name: string
+
 const makeEmailValidator = (): IEmailValidator => {
   class EmailValidatorStub implements IEmailValidator {
     isValid (email: string): boolean {
@@ -15,10 +20,10 @@ const makeAddAccount = (): IAddAccount => {
   class AddAccountStub implements IAddAccount {
     add (account: IAddAccountModel): IAccountModel {
       const fakeAccount = {
-        id: 'test.id',
-        name: 'test user',
-        email: 'test.user@email.com',
-        password: 'test.password'
+        id,
+        name,
+        email,
+        password
       }
       return fakeAccount
     }
@@ -40,10 +45,8 @@ const makeSut = (): SutTypes => {
 }
 
 describe('SignUp Controller', () => {
-  let email: string
-  let password: string
-  let name: string
   beforeEach(() => {
+    id = 'test.id'
     name = 'Test User'
     email = 'test.user@email.com'
     password = 'test.password'
@@ -208,5 +211,22 @@ describe('SignUp Controller', () => {
 
     sut.handle(httpRequest)
     expect(addSpy).toBeCalledWith({ name, email, password })
+  })
+
+  it('Should return 200 if valid params are provided', async () => {
+    const { sut } = makeSut()
+
+    const httpRequest = {
+      body: {
+        name,
+        email,
+        password,
+        passwordConfirmation: password
+      }
+    }
+
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({ name, email, password, id })
   })
 })
