@@ -1,7 +1,7 @@
 import { IAccountModel } from '../models/account'
 
 export interface IAddAccount {
-  add: (account: IAddAccountModel) => IAccountModel
+  add: (account: IAddAccountModel) => Promise<IAccountModel>
 }
 
 export interface IAddAccountModel {
