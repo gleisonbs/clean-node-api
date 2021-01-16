@@ -18,11 +18,17 @@ describe('EmailValidator ', () => {
     expect(isValid).toBe(false)
   })
 
-  describe('EmailValidator ', () => {
-    it('Should return false if validator returns false', async () => {
-      const sut = new EmailValidatorAdapter()
-      const isValid = sut.isValid(email)
-      expect(isValid).toBe(true)
-    })
+  it('Should return false if validator returns false', async () => {
+    const sut = new EmailValidatorAdapter()
+    const isValid = sut.isValid(email)
+    expect(isValid).toBe(true)
+  })
+
+  it('Should call validator with correct email', async () => {
+    const sut = new EmailValidatorAdapter()
+    const isEmailSpy = jest.spyOn(validator, 'isEmail')
+
+    sut.isValid(email)
+    expect(isEmailSpy).toBeCalledWith(email)
   })
 })
