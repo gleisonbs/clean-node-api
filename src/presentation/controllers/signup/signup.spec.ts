@@ -2,10 +2,10 @@ import { IAccountModel, IAddAccount, IAddAccountModel, IEmailValidator } from '.
 import { SignUpController } from './signup'
 import { InvalidParamError, MissingParamError, ServerError } from '../../errors'
 
-let id: string
-let email: string
-let password: string
-let name: string
+const id = 'test.id'
+const name = 'Test User'
+const email = 'test.user@email.com'
+const password = 'test.password'
 
 const makeEmailValidator = (): IEmailValidator => {
   class EmailValidatorStub implements IEmailValidator {
@@ -45,13 +45,6 @@ const makeSut = (): SutTypes => {
 }
 
 describe('SignUp Controller', () => {
-  beforeEach(() => {
-    id = 'test.id'
-    name = 'Test User'
-    email = 'test.user@email.com'
-    password = 'test.password'
-  })
-
   it('Should return 400 if name is not provided', async () => {
     const { sut } = makeSut()
     const httpRequest = {
