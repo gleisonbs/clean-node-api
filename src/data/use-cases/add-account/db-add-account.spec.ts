@@ -1,5 +1,5 @@
 import { DbAddAccount } from './db-add-account'
-import { IEncrypter } from '../../protocols/encrypter'
+import { IEncrypter } from './db-add-account-protocols'
 
 const name = 'Test User'
 const email = 'test.user@email.com'
