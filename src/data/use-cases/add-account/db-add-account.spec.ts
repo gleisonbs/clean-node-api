@@ -1,6 +1,7 @@
 import { DbAddAccount } from './db-add-account'
 import { IEncrypter, IAddAccountModel, IAccountModel, IAddAccountRepository } from './db-add-account-protocols'
 
+const id = 'test.id'
 const name = 'Test User'
 const email = 'test.user@email.com'
 const password = 'test.password'
@@ -18,7 +19,7 @@ const makeEncrypter = (): IEncrypter => {
 const makeAddAccountRepository = (): IAddAccountRepository => {
   class AddAccountRepositoryStub implements IAddAccountRepository {
     async add (account: IAddAccountModel): Promise<IAccountModel> {
-      const fakeAccount = { name: '', email: '', password: hashedPassword, id: '' }
+      const fakeAccount = { id, name, email, password: hashedPassword }
       return await new Promise(resolve => resolve(fakeAccount))
     }
   }
@@ -95,5 +96,20 @@ describe('DB Add Account Use Case', () => {
 
     const promise = sut.add(accountData)
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should return an account on success', async () => {
+    const { sut } = makeSut()
+
+    const accountData = {
+      name,
+      email,
+      password
+    }
+
+    const account = await sut.add(accountData)
+    expect(account).toEqual({
+      id, name, email, password: hashedPassword
+    })
   })
 })
