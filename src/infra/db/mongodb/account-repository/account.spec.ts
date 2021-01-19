@@ -1,6 +1,10 @@
 import { MongoHelper } from '../helpers/mongo-helper'
 import { AccountMongoRepository } from './account'
 
+const makeSut = (): AccountMongoRepository => {
+  return new AccountMongoRepository()
+}
+
 describe('Account Mongo Repository', () => {
   const name: string = 'Test User'
   const email: string = 'test.user@email.com'
@@ -14,7 +18,7 @@ describe('Account Mongo Repository', () => {
   })
 
   it('Should return an account on success', async () => {
-    const sut = new AccountMongoRepository()
+    const sut = makeSut()
     const account = await sut.add({ name, email, password })
 
     expect(account).toBeTruthy()
