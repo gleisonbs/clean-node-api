@@ -1,11 +1,42 @@
 import { LogControllerDecorator } from './log'
 import { IHttpRequest, IController, IHttpResponse } from '../../presentation/protocols'
-import { serverError } from '../../presentation/helpers/http-helper'
+import { ok, serverError } from '../../presentation/helpers/http-helper'
 import { ILogErrorRepository } from '../../data/protocols/log-error-repository'
+import { IAccountModel } from '../../domain/models/account'
+
+const name = 'Test User'
+const id = 'test.id'
+const email = 'test.user@email.com'
+const password = 'test.password'
+const errorStack = 'test.stack'
+
+const makeFakeServerError = (): IHttpResponse => {
+  const fakeError = new Error()
+  fakeError.stack = errorStack
+  return serverError(fakeError)
+}
+
+const makeFakeAccount = (): IAccountModel => ({
+  id,
+  email,
+  name,
+  password: 'test.hashed.password'
+})
+
+const makeHttpRequest = (): IHttpRequest => {
+  return {
+    body: {
+      email,
+      name,
+      password,
+      passwordConfirmation: password
+    }
+  }
+}
 
 const makeLogErrorRepository = (): ILogErrorRepository => {
   class LogErrorRepositoryStub implements ILogErrorRepository {
-    async log (message: string): Promise<void> {}
+    async log (message: string): Promise<void> { }
   }
   return new LogErrorRepositoryStub()
 }
@@ -13,15 +44,7 @@ const makeLogErrorRepository = (): ILogErrorRepository => {
 const makeController = (): IController => {
   class ControllerStub implements IController {
     async handle (httpRequest: IHttpRequest): Promise<IHttpResponse> {
-      const httpResponse: IHttpResponse = {
-        statusCode: 200,
-        body: {
-          email: 'test.user@email.com',
-          name: 'test user',
-          password: 'test.hashed.password'
-        }
-      }
-      return httpResponse
+      return ok(makeFakeAccount())
     }
   }
   return new ControllerStub()
@@ -45,14 +68,7 @@ describe('Log Controller Decorator', () => {
     const { sut, controller } = makeSut()
     const handleSpy = jest.spyOn(controller, 'handle')
 
-    const httpRequest: IHttpRequest = {
-      body: {
-        email: 'test.user@email.com',
-        name: 'test user',
-        password: 'test.password',
-        passwordConfirmation: 'test.password'
-      }
-    }
+    const httpRequest: IHttpRequest = makeHttpRequest()
 
     await sut.handle(httpRequest)
     expect(handleSpy).toBeCalledWith(httpRequest)
@@ -61,45 +77,19 @@ describe('Log Controller Decorator', () => {
   it('Should return the same result of the controller', async () => {
     const { sut } = makeSut()
 
-    const httpRequest: IHttpRequest = {
-      body: {
-        email: 'test.user@email.com',
-        name: 'test user',
-        password: 'test.password',
-        passwordConfirmation: 'test.password'
-      }
-    }
-
-    const httpResponse: IHttpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual({
-      statusCode: 200,
-      body: {
-        email: 'test.user@email.com',
-        name: 'test user',
-        password: 'test.hashed.password'
-      }
-    })
+    const httpResponse: IHttpResponse = await sut.handle(makeHttpRequest())
+    expect(httpResponse).toEqual(ok(makeFakeAccount()))
   })
 
-  it('Should call LogErrorRepository with correct error if cc', async () => {
+  it('Should call LogErrorRepository with correct error if controller throws', async () => {
     const { sut, controller, logErrorRepository } = makeSut()
 
-    const fakeError = new Error()
-    fakeError.stack = 'test.stack'
-    const error = serverError(fakeError)
+    const error = makeFakeServerError()
 
     jest.spyOn(controller, 'handle').mockResolvedValueOnce(error)
     const logSpy = jest.spyOn(logErrorRepository, 'log')
 
-    const httpRequest: IHttpRequest = {
-      body: {
-        email: 'test.user@email.com',
-        name: 'test user',
-        password: 'test.password',
-        passwordConfirmation: 'test.password'
-      }
-    }
-    await sut.handle(httpRequest)
-    expect(logSpy).toBeCalledWith(fakeError.stack)
+    await sut.handle(makeHttpRequest())
+    expect(logSpy).toBeCalledWith(errorStack)
   })
 })
