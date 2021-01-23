@@ -9,8 +9,14 @@ export const adaptRoute = (controller: IController) => {
     }
 
     controller.handle(httpRequest)
-      .then((httpResponse: IHttpResponse) =>
-        res.status(httpResponse.statusCode).json(httpResponse.body))
+      .then((httpResponse: IHttpResponse) => {
+        if (httpResponse.statusCode === 200) {
+          res.status(httpResponse.statusCode).json(httpResponse.body)
+        } else {
+          res.status(httpResponse.statusCode).json({ error: httpResponse.body.message })
+        }
+      }
+      )
       .catch(err => console.error(err))
   }
 }
