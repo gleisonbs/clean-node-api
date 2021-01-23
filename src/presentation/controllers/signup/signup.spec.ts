@@ -1,7 +1,8 @@
 import { IAccountModel, IAddAccount, IAddAccountModel, IEmailValidator } from './signup-protocols'
 import { SignUpController } from './signup'
-import { InvalidParamError, MissingParamError, ServerError } from '../../errors'
+import { InvalidParamError, MissingParamError } from '../../errors'
 import { IHttpRequest } from '../../protocols'
+import { ok, badRequest, serverError } from '../../helpers/http-helper'
 
 const id = 'test.id'
 const name = 'Test User'
@@ -62,8 +63,7 @@ describe('SignUp Controller', () => {
     const httpRequest = makeHttpRequest()
     httpRequest.body.name = undefined
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissingParamError('name'))
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('name')))
   })
 
   it('Should return 400 if email is not provided', async () => {
@@ -71,8 +71,7 @@ describe('SignUp Controller', () => {
     const httpRequest = makeHttpRequest()
     httpRequest.body.email = undefined
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissingParamError('email'))
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('email')))
   })
 
   it('Should return 400 if password is not provided', async () => {
@@ -80,8 +79,7 @@ describe('SignUp Controller', () => {
     const httpRequest = makeHttpRequest()
     httpRequest.body.password = undefined
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissingParamError('password'))
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('password')))
   })
 
   it('Should return 400 if password confirmation is not provided', async () => {
@@ -89,8 +87,7 @@ describe('SignUp Controller', () => {
     const httpRequest = makeHttpRequest()
     httpRequest.body.passwordConfirmation = undefined
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissingParamError('passwordConfirmation'))
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('passwordConfirmation')))
   })
 
   it('Should return 400 if password confirmation is different from password', async () => {
@@ -98,8 +95,7 @@ describe('SignUp Controller', () => {
     const httpRequest = makeHttpRequest()
     httpRequest.body.passwordConfirmation = 'diff.test.password'
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new InvalidParamError('passwordConfirmation'))
+    expect(httpResponse).toEqual(badRequest(new InvalidParamError('passwordConfirmation')))
   })
 
   it('Should return 400 if an invalid email is provided', async () => {
@@ -108,8 +104,7 @@ describe('SignUp Controller', () => {
     const httpRequest = makeHttpRequest()
     httpRequest.body.email = 'test.invalid.email.com'
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new InvalidParamError('email'))
+    expect(httpResponse).toEqual(badRequest(new InvalidParamError('email')))
   })
 
   it('Should call email validator with correct email', async () => {
@@ -126,8 +121,7 @@ describe('SignUp Controller', () => {
       .mockImplementationOnce(() => { throw new Error() })
     const httpRequest = makeHttpRequest()
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError(''))
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 
   it('Should return 500 if AddAccount throws', async () => {
@@ -138,8 +132,7 @@ describe('SignUp Controller', () => {
       })
     const httpRequest = makeHttpRequest()
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError(''))
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 
   it('Should call AddAccount with correct values', async () => {
@@ -154,7 +147,6 @@ describe('SignUp Controller', () => {
     const { sut } = makeSut()
     const httpRequest = makeHttpRequest()
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toEqual({ name, email, password, id })
+    expect(httpResponse).toEqual(ok({ name, email, password, id }))
   })
 })
