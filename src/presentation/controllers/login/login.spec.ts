@@ -16,4 +16,17 @@ describe('Login Controller', () => {
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(badRequest(new MissingParamError('email')))
   })
+
+  it('Should return 400 if no email is provided', async () => {
+    const sut = new LoginController()
+
+    const httpRequest: IHttpRequest = {
+      body: {
+        email: 'test.user@email.com'
+      }
+    }
+
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('password')))
+  })
 })
