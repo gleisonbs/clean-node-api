@@ -1,7 +1,7 @@
 import { IController } from '../../protocols/controller'
 import { IHttpRequest, IHttpResponse } from '../../protocols'
 import { ok, badRequest } from '../../helpers/http-helper'
-import { MissingParamError } from '../../errors'
+import { MissingParamError, InvalidParamError } from '../../errors'
 import { IEmailValidator } from '../signup/signup-protocols'
 
 export class LoginController implements IController {
@@ -12,16 +12,19 @@ export class LoginController implements IController {
   }
 
   async handle (httpRequest: IHttpRequest): Promise<IHttpResponse> {
-    if (!httpRequest.body.email) {
+    const { email, password } = httpRequest.body
+    if (!email) {
       return badRequest(new MissingParamError('email'))
     }
 
-    if (!httpRequest.body.password) {
+    if (!password) {
       return badRequest(new MissingParamError('password'))
     }
 
-    const { email } = httpRequest.body
-    this.emailValidator.isValid(email)
+    const isValidEmail = this.emailValidator.isValid(email)
+    if (!isValidEmail) {
+      return badRequest(new InvalidParamError('email'))
+    }
 
     return ok({})
   }
