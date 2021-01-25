@@ -69,38 +69,6 @@ const makeSut = (): SutTypes => {
 }
 
 describe('SignUp Controller', () => {
-  it('Should return 400 if name is not provided', async () => {
-    const { sut } = makeSut()
-    const httpRequest = makeHttpRequest()
-    httpRequest.body.name = undefined
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(badRequest(new MissingParamError('name')))
-  })
-
-  it('Should return 400 if email is not provided', async () => {
-    const { sut } = makeSut()
-    const httpRequest = makeHttpRequest()
-    httpRequest.body.email = undefined
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(badRequest(new MissingParamError('email')))
-  })
-
-  it('Should return 400 if password is not provided', async () => {
-    const { sut } = makeSut()
-    const httpRequest = makeHttpRequest()
-    httpRequest.body.password = undefined
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(badRequest(new MissingParamError('password')))
-  })
-
-  it('Should return 400 if password confirmation is not provided', async () => {
-    const { sut } = makeSut()
-    const httpRequest = makeHttpRequest()
-    httpRequest.body.passwordConfirmation = undefined
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(badRequest(new MissingParamError('passwordConfirmation')))
-  })
-
   it('Should return 400 if password confirmation is different from password', async () => {
     const { sut } = makeSut()
     const httpRequest = makeHttpRequest()
