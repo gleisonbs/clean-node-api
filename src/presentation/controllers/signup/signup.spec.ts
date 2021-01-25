@@ -1,4 +1,4 @@
-import { IAccountModel, IAddAccount, IAddAccountModel, IEmailValidator } from './signup-protocols'
+import { IAccountModel, IAddAccount, IAddAccountModel, IEmailValidator, IValidation } from './signup-protocols'
 import { SignUpController } from './signup'
 import { InvalidParamError, MissingParamError } from '../../errors'
 import { IHttpRequest } from '../../protocols'
@@ -38,23 +38,34 @@ const makeAddAccount = (): IAddAccount => {
         email,
         password
       }
-      return await new Promise(resolve => resolve(fakeAccount))
+      return fakeAccount
     }
   }
   return new AddAccountStub()
+}
+
+const makeValidation = (): IValidation => {
+  class ValidationStub implements IValidation {
+    validate (input: any): Error | null {
+      return null
+    }
+  }
+  return new ValidationStub()
 }
 
 interface SutTypes {
   sut: SignUpController
   emailValidatorStub: IEmailValidator
   addAccountStub: IAddAccount
+  validationStub: IValidation
 }
 
 const makeSut = (): SutTypes => {
   const addAccountStub = makeAddAccount()
   const emailValidatorStub = makeEmailValidator()
-  const sut = new SignUpController(emailValidatorStub, addAccountStub)
-  return { sut, emailValidatorStub, addAccountStub }
+  const validationStub = makeValidation()
+  const sut = new SignUpController(emailValidatorStub, addAccountStub, validationStub)
+  return { sut, emailValidatorStub, addAccountStub, validationStub }
 }
 
 describe('SignUp Controller', () => {
@@ -148,5 +159,13 @@ describe('SignUp Controller', () => {
     const httpRequest = makeHttpRequest()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(ok({ name, email, password, id }))
+  })
+
+  it('Should call Validation with correct value', async () => {
+    const { sut, validationStub } = makeSut()
+    const validateSpy = jest.spyOn(validationStub, 'validate')
+    const httpRequest = makeHttpRequest()
+    await sut.handle(httpRequest)
+    expect(validateSpy).toBeCalledWith(httpRequest.body)
   })
 })
