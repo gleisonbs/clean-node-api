@@ -1,7 +1,7 @@
 import { LoginController } from './login'
 import { badRequest, ok, serverError, unauthorized } from '../../helpers/http/http-helper'
 import { MissingParamError } from '../../errors'
-import { IHttpRequest, IAuthentication, IValidation } from '../login/login-protocols'
+import { IHttpRequest, IAuthentication, IValidation, IAuthenticationModel } from '../login/login-protocols'
 
 const email = 'test.user@email.com'
 const password = 'test.password'
@@ -9,7 +9,7 @@ const accessToken = 'test.token'
 
 const makeAuthentication = (): IAuthentication => {
   class AuthenticationStub implements IAuthentication {
-    async auth (email: string, password: string): Promise<string> {
+    async auth (authentication: IAuthenticationModel): Promise<string> {
       return accessToken
     }
   }
@@ -57,7 +57,7 @@ describe('Login Controller', () => {
     const authSpy = jest.spyOn(authentication, 'auth')
 
     await sut.handle(makeFakeRequest())
-    expect(authSpy).toBeCalledWith(email, password)
+    expect(authSpy).toBeCalledWith({ email, password })
   })
 
   it('Should returns 500 if Authentication throws', async () => {
