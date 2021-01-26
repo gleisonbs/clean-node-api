@@ -2,7 +2,7 @@ import { IAccountModel, IAddAccount, IAddAccountModel, IValidation } from './sig
 import { SignUpController } from './signup'
 import { MissingParamError } from '../../errors'
 import { IHttpRequest } from '../../protocols'
-import { ok, badRequest, serverError } from '../../helpers/http-helper'
+import { ok, badRequest, serverError } from '../../helpers/http/http-helper'
 
 const id = 'test.id'
 const name = 'Test User'
