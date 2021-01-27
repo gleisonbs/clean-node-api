@@ -1,4 +1,3 @@
-import { IAccountModel } from '../../../domain/models/account'
 import { ILoadAccountByEmailRepository } from '../../protocols/db/load-account-by-email-repository'
 import { IAuthenticationModel } from '../../../domain/use-cases/authentication'
 
@@ -9,13 +8,8 @@ export class DbAuthentication {
     this.loadAccountByEmailRepository = loadAccountByEmailRepository
   }
 
-  async auth (authentication: IAuthenticationModel): Promise<IAccountModel> {
+  async auth (authentication: IAuthenticationModel): Promise<string> {
     await this.loadAccountByEmailRepository.load(authentication.email)
-    return {
-      id: '',
-      name: '',
-      email: '',
-      password: ''
-    }
+    return null
   }
 }
