@@ -2,6 +2,7 @@ import { IAccountModel } from '../../../domain/models/account'
 import { ILoadAccountByEmailRepository } from '../../protocols/db/load-account-by-email-repository'
 import { DbAuthentication } from './db-authentication'
 import { IAuthenticationModel } from '../../../domain/use-cases/authentication'
+import { IHashComparer } from '../../protocols/criptography/hash-comparer'
 
 const id = 'test.id'
 const name = 'test.name'
@@ -13,7 +14,7 @@ const makeFakeAccount = (): IAccountModel => {
     id,
     name,
     email,
-    password
+    password: 'test.hashed.password'
   }
 }
 
@@ -33,15 +34,26 @@ const makeLoadAccountByEmailRepository = (): ILoadAccountByEmailRepository => {
   return new LoadAccountByEmailRepositoryStub()
 }
 
+const makeHashComparer = (): IHashComparer => {
+  class HashComparerStub implements IHashComparer {
+    async compare (value: string, hashedValue: string): Promise<boolean> {
+      return true
+    }
+  }
+  return new HashComparerStub()
+}
+
 interface SutTypes {
   sut: DbAuthentication
   loadAccountByEmailRepository: ILoadAccountByEmailRepository
+  hashComparer: IHashComparer
 }
 
 const makeSut = (): SutTypes => {
   const loadAccountByEmailRepository = makeLoadAccountByEmailRepository()
-  const sut = new DbAuthentication(loadAccountByEmailRepository)
-  return { sut, loadAccountByEmailRepository }
+  const hashComparer = makeHashComparer()
+  const sut = new DbAuthentication(loadAccountByEmailRepository, hashComparer)
+  return { sut, loadAccountByEmailRepository, hashComparer }
 }
 
 describe('DbAuthentication UseCase', () => {
@@ -69,5 +81,13 @@ describe('DbAuthentication UseCase', () => {
     const accessToken = await sut.auth(makeFakeAuthentication())
 
     expect(accessToken).toBeNull()
+  })
+
+  it('Should call HashComparer with correct values', async () => {
+    const { sut, hashComparer } = makeSut()
+    const compareSpy = jest.spyOn(hashComparer, 'compare')
+    await sut.auth(makeFakeAuthentication())
+
+    expect(compareSpy).toBeCalledWith(password, 'test.hashed.password')
   })
 })
