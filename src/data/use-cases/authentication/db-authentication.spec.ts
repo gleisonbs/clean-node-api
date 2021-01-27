@@ -9,6 +9,7 @@ const id = 'test.id'
 const name = 'test.name'
 const email = 'test.user@email.com'
 const password = 'test.password'
+const token = 'test.token'
 
 const makeFakeAccount = (): IAccountModel => {
   return {
@@ -47,7 +48,7 @@ const makeHashComparer = (): IHashComparer => {
 const makeTokenGenerator = (): ITokenGenerator => {
   class TokenGeneratorStub implements ITokenGenerator {
     async generate (id: string): Promise<string> {
-      return 'test.token'
+      return token
     }
   }
   return new TokenGeneratorStub()
@@ -136,5 +137,13 @@ describe('DbAuthentication UseCase', () => {
     const promise = sut.auth(makeFakeAuthentication())
 
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should return token on success', async () => {
+    const { sut } = makeSut()
+
+    const accessToken = await sut.auth(makeFakeAuthentication())
+
+    expect(accessToken).toBe(token)
   })
 })
