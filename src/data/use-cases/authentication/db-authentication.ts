@@ -19,10 +19,14 @@ export class DbAuthentication {
 
     if (account) {
       const hashedPassword = account ? account.password : ''
-      await this.hashComparer.compare(authentication.password, hashedPassword)
+      const isValidPassword = await this.hashComparer.compare(authentication.password, hashedPassword)
+      if (!isValidPassword) {
+        return null
+      }
 
       const accountId = account ? account.id : ''
-      await this.tokenGenerator.generate(accountId)
+      const accessToken = await this.tokenGenerator.generate(accountId)
+      return accessToken
     }
 
     return null
