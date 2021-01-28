@@ -1,10 +1,5 @@
-import { IAccountModel } from '../../../domain/models/account'
-import { ILoadAccountByEmailRepository } from '../../protocols/db/load-account-by-email-repository'
+import { IAccountModel, ILoadAccountByEmailRepository, IAuthenticationModel, IHashComparer, ITokenGenerator, IUpdateAccessTokenRepository } from './db-authentication-protocols'
 import { DbAuthentication } from './db-authentication'
-import { IAuthenticationModel } from '../../../domain/use-cases/authentication'
-import { IHashComparer } from '../../protocols/criptography/hash-comparer'
-import { ITokenGenerator } from '../../protocols/criptography/token-generator'
-import { IUpdateAccessTokenRepository } from '../../protocols/db/update-access-token-repository'
 
 const id = 'test.id'
 const name = 'test.name'
@@ -30,7 +25,7 @@ const makeFakeAuthentication = (): IAuthenticationModel => {
 
 const makeLoadAccountByEmailRepository = (): ILoadAccountByEmailRepository => {
   class LoadAccountByEmailRepositoryStub implements ILoadAccountByEmailRepository {
-    async load (email: string): Promise<IAccountModel|null> {
+    async load (email: string): Promise<IAccountModel | null> {
       return makeFakeAccount()
     }
   }
@@ -57,7 +52,7 @@ const makeTokenGenerator = (): ITokenGenerator => {
 
 const makeUpdateAccessTokenRepository = (): IUpdateAccessTokenRepository => {
   class UpdateAccessTokenRepositoryStub implements IUpdateAccessTokenRepository {
-    async update (id: string, token: string): Promise<void> {}
+    async update (id: string, token: string): Promise<void> { }
   }
   return new UpdateAccessTokenRepositoryStub()
 }
