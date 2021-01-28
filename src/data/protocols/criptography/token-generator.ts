@@ -1,3 +1,3 @@
-export interface ITokenGenerator {
-  generate: (id: string) => Promise<string>
+export interface IEncrypter {
+  encrypt: (value: string) => Promise<string>
 }
