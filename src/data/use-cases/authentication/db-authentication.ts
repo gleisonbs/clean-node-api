@@ -18,7 +18,7 @@ export class DbAuthentication {
   }
 
   async auth (authentication: IAuthenticationModel): Promise<string | null> {
-    const account = await this.loadAccountByEmailRepository.load(authentication.email)
+    const account = await this.loadAccountByEmailRepository.loadByEmail(authentication.email)
 
     if (account) {
       const hashedPassword = account ? account.password : ''
