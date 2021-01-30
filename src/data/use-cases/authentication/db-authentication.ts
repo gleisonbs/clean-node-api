@@ -1,16 +1,11 @@
 import { ILoadAccountByEmailRepository, IAuthenticationModel, IHashComparer, IEncrypter, IUpdateAccessTokenRepository } from './db-authentication-protocols'
 
 export class DbAuthentication {
-  private readonly loadAccountByEmailRepository: ILoadAccountByEmailRepository
-  private readonly hashComparer: IHashComparer
-  private readonly encrypter: IEncrypter
-  private readonly updateAccessTokenRepository: IUpdateAccessTokenRepository
-
   constructor (
-    loadAccountByEmailRepository: ILoadAccountByEmailRepository,
-    hashComparer: IHashComparer,
-    encrypter: IEncrypter,
-    updateAccessTokenRepository: IUpdateAccessTokenRepository) {
+    private readonly loadAccountByEmailRepository: ILoadAccountByEmailRepository,
+    private readonly hashComparer: IHashComparer,
+    private readonly encrypter: IEncrypter,
+    private readonly updateAccessTokenRepository: IUpdateAccessTokenRepository) {
     this.loadAccountByEmailRepository = loadAccountByEmailRepository
     this.hashComparer = hashComparer
     this.encrypter = encrypter

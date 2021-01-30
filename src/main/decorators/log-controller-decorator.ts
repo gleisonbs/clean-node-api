@@ -2,10 +2,8 @@ import { IController, IHttpRequest, IHttpResponse } from '../../presentation/pro
 import { ILogErrorRepository } from '../../data/protocols/db/log/log-error-repository'
 
 export class LogControllerDecorator implements IController {
-  private readonly controller: IController
-  private readonly logErrorRepository: ILogErrorRepository
-
-  constructor (controller: IController, logErrorRepository: ILogErrorRepository) {
+  constructor (private readonly controller: IController,
+    private readonly logErrorRepository: ILogErrorRepository) {
     this.controller = controller
     this.logErrorRepository = logErrorRepository
   }

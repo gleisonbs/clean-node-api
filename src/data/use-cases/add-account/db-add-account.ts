@@ -1,10 +1,8 @@
 import { IAccountModel, IAddAccount, IAddAccountModel, IHasher, IAddAccountRepository } from './db-add-account-protocols'
 
 export class DbAddAccount implements IAddAccount {
-  private readonly hasher: IHasher
-  private readonly addAccountRepository: IAddAccountRepository
-
-  constructor (hasher: IHasher, addAccountRepository: IAddAccountRepository) {
+  constructor (private readonly hasher: IHasher,
+    private readonly addAccountRepository: IAddAccountRepository) {
     this.hasher = hasher
     this.addAccountRepository = addAccountRepository
   }

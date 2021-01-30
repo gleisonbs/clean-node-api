@@ -3,9 +3,7 @@ import { IHasher } from '../../../data/protocols/criptography/hasher'
 import { IHashComparer } from '../../../data/protocols/criptography/hash-comparer'
 
 export class BcryptAdapter implements IHasher, IHashComparer {
-  private readonly salt: number
-
-  constructor (salt: number) {
+  constructor (private readonly salt: number) {
     this.salt = salt
   }
 

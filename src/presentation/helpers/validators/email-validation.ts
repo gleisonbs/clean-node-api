@@ -3,9 +3,7 @@ import { InvalidParamError } from '../../errors'
 import { IEmailValidator } from '../../protocols/email-validator'
 
 export class EmailValidation implements IValidation {
-  private readonly emailValidator: IEmailValidator
-
-  constructor (emailValidator: IEmailValidator) {
+  constructor (private readonly emailValidator: IEmailValidator) {
     this.emailValidator = emailValidator
   }
 
