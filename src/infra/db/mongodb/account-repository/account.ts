@@ -3,6 +3,7 @@ import { IAddAccountModel } from '../../../../domain/use-cases/add-account'
 import { IAccountModel } from '../../../../domain/models/account'
 import { MongoHelper } from '../helpers/mongo-helper'
 import { ILoadAccountByEmailRepository } from '../../../../data/protocols/db/load-account-by-email-repository'
+import { IUpdateAccessTokenRepository } from '../../../../data/protocols/db/update-access-token-repository'
 
 export class AccountMongoRepository implements IAddAccountRepository, ILoadAccountByEmailRepository, IUpdateAccessTokenRepository {
   async add (accountData: IAddAccountModel): Promise<IAccountModel> {
