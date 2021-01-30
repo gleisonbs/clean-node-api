@@ -1,7 +1,7 @@
-import { LoginController } from './login'
+import { LoginController } from './login-controller'
 import { badRequest, ok, serverError, unauthorized } from '../../helpers/http/http-helper'
 import { MissingParamError } from '../../errors'
-import { IHttpRequest, IAuthentication, IValidation, IAuthenticationModel } from '../login/login-protocols'
+import { IHttpRequest, IAuthentication, IValidation, IAuthenticationModel } from './login-controller-protocols'
 
 const email = 'test.user@email.com'
 const password = 'test.password'

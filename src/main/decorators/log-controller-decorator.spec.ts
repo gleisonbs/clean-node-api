@@ -1,7 +1,7 @@
-import { LogControllerDecorator } from './log'
+import { LogControllerDecorator } from './log-controller-decorator'
 import { IHttpRequest, IController, IHttpResponse } from '../../presentation/protocols'
 import { ok, serverError } from '../../presentation/helpers/http/http-helper'
-import { ILogErrorRepository } from '../../data/protocols/db/log-error-repository'
+import { ILogErrorRepository } from '../../data/protocols/db/log/log-error-repository'
 import { IAccountModel } from '../../domain/models/account'
 
 const name = 'Test User'
