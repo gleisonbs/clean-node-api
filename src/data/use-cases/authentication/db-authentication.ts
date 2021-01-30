@@ -29,7 +29,7 @@ export class DbAuthentication {
 
       const accountId = account ? account.id : ''
       const accessToken = await this.encrypter.encrypt(accountId)
-      await this.updateAccessTokenRepository.update(accountId, accessToken)
+      await this.updateAccessTokenRepository.updateAccessToken(accountId, accessToken)
       return accessToken
     }
 
