@@ -1,6 +1,7 @@
 import { ILoadAccountByEmailRepository, IAuthenticationModel, IHashComparer, IEncrypter, IUpdateAccessTokenRepository } from './db-authentication-protocols'
+import { IAuthentication } from '../../../domain/use-cases/authentication'
 
-export class DbAuthentication {
+export class DbAuthentication implements IAuthentication {
   constructor (
     private readonly loadAccountByEmailRepository: ILoadAccountByEmailRepository,
     private readonly hashComparer: IHashComparer,
