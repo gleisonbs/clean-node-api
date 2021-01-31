@@ -51,5 +51,24 @@ describe('Login Routes', () => {
         })
         .expect(200)
     })
+
+    it('Should return 401 on login with wrong password', async () => {
+      const email = 'test.user@email.com'
+      const password = 'test.password'
+      const hashedPassword = await hash(password, 12)
+
+      accountCollection = await MongoHelper.getCollection('accounts')
+      await accountCollection.insertOne({
+        email,
+        password: hashedPassword
+      })
+
+      await request(app).post('/api/login')
+        .send({
+          email,
+          password: 'test.wrong.password'
+        })
+        .expect(401)
+    })
   })
 })
