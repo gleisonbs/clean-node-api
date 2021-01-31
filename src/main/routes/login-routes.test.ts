@@ -70,5 +70,16 @@ describe('Login Routes', () => {
         })
         .expect(401)
     })
+
+    it('Should return 401 on login with a unregistered user', async () => {
+      const email = 'test.user@email.com'
+      const password = 'test.password'
+      await request(app).post('/api/login')
+        .send({
+          email,
+          password
+        })
+        .expect(401)
+    })
   })
 })
