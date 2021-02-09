@@ -93,7 +93,7 @@ describe('SignUp Controller', () => {
     const { sut } = makeSut()
     const httpRequest = makeHttpRequest()
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(ok({ name, email, password, id }))
+    expect(httpResponse).toEqual(ok({ accessToken }))
   })
 
   it('Should call Validation with correct value', async () => {
