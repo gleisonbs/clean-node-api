@@ -1,4 +1,4 @@
-import { IAccountModel, IAddAccount, IAddAccountModel, IValidation } from './signup-controller-protocols'
+import { IAccountModel, IAddAccount, IAddAccountModel, IValidation, IAuthentication, IAuthenticationModel } from './signup-controller-protocols'
 import { SignUpController } from './signup-controller'
 import { MissingParamError } from '../../errors'
 import { IHttpRequest } from '../../protocols'
@@ -8,6 +8,16 @@ const id = 'test.id'
 const name = 'Test User'
 const email = 'test.user@email.com'
 const password = 'test.password'
+
+const accessToken = 'test.token'
+const makeAuthentication = (): IAuthentication => {
+  class AuthenticationStub implements IAuthentication {
+    async auth (authentication: IAuthenticationModel): Promise<string> {
+      return accessToken
+    }
+  }
+  return new AuthenticationStub()
+}
 
 const makeHttpRequest = (): IHttpRequest => {
   return {
@@ -48,13 +58,15 @@ interface SutTypes {
   sut: SignUpController
   addAccountStub: IAddAccount
   validationStub: IValidation
+  authenticationStub: IAuthentication
 }
 
 const makeSut = (): SutTypes => {
   const addAccountStub = makeAddAccount()
   const validationStub = makeValidation()
-  const sut = new SignUpController(addAccountStub, validationStub)
-  return { sut, addAccountStub, validationStub }
+  const authenticationStub = makeAuthentication()
+  const sut = new SignUpController(addAccountStub, validationStub, authenticationStub)
+  return { sut, addAccountStub, validationStub, authenticationStub }
 }
 
 describe('SignUp Controller', () => {
@@ -100,5 +112,13 @@ describe('SignUp Controller', () => {
     const httpRequest = makeHttpRequest()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(badRequest(new MissingParamError(field)))
+  })
+
+  it('Should call Authentication with correct values', async () => {
+    const { sut, authenticationStub } = makeSut()
+    const authSpy = jest.spyOn(authenticationStub, 'auth')
+
+    await sut.handle(makeHttpRequest())
+    expect(authSpy).toBeCalledWith({ email, password })
   })
 })
