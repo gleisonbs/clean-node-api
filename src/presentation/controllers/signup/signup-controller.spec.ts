@@ -2,7 +2,7 @@ import { IAccountModel, IAddAccount, IAddAccountModel, IValidation, IAuthenticat
 import { SignUpController } from './signup-controller'
 import { MissingParamError } from '../../errors'
 import { IHttpRequest } from '../../protocols'
-import { ok, badRequest, serverError } from '../../helpers/http/http-helper'
+import { ok, badRequest, serverError, forbidden } from '../../helpers/http/http-helper'
 
 const id = 'test.id'
 const name = 'Test User'
@@ -32,7 +32,7 @@ const makeHttpRequest = (): IHttpRequest => {
 
 const makeAddAccount = (): IAddAccount => {
   class AddAccountStub implements IAddAccount {
-    async add (account: IAddAccountModel): Promise<IAccountModel> {
+    async add (account: IAddAccountModel): Promise<IAccountModel|null> {
       const fakeAccount = {
         id,
         name,
@@ -87,6 +87,15 @@ describe('SignUp Controller', () => {
     const httpRequest = makeHttpRequest()
     await sut.handle(httpRequest)
     expect(addSpy).toBeCalledWith({ name, email, password })
+  })
+
+  it('Should return 403 if AddAccount returns null', async () => {
+    const { sut, addAccountStub } = makeSut()
+    jest.spyOn(addAccountStub, 'add').mockResolvedValueOnce(null)
+
+    const httpRequest = makeHttpRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(forbidden())
   })
 
   it('Should return 200 if valid params are provided', async () => {
