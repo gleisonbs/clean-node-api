@@ -17,7 +17,7 @@ const makeFakeAccount = (): IAccountModel => ({
   id,
   name,
   email,
-  password
+  password: hashedPassword
 })
 
 const makeHasher = (): IHasher => {
@@ -32,7 +32,7 @@ const makeHasher = (): IHasher => {
 const makeLoadAccountByEmailRepository = (): ILoadAccountByEmailRepository => {
   class LoadAccountByEmailRepositoryStub implements ILoadAccountByEmailRepository {
     async loadByEmail (email: string): Promise<IAccountModel | null> {
-      return makeFakeAccount()
+      return null
     }
   }
   return new LoadAccountByEmailRepositoryStub()
@@ -109,9 +109,7 @@ describe('DB Add Account Use Case', () => {
 
   it('Should return an account on success', async () => {
     const { sut } = makeSut()
-
     const accountData = makeFakeAddAccount()
-
     const account = await sut.add(accountData)
     expect(account).toEqual({
       id, name, email, password: hashedPassword
@@ -124,5 +122,12 @@ describe('DB Add Account Use Case', () => {
     await sut.add(makeFakeAddAccount())
 
     expect(loadSpy).toBeCalledWith(email)
+  })
+
+  it('Should return null if LoadAccountByEmailRepository returns not null', async () => {
+    const { sut, loadAccountByEmailRepositoryStub } = makeSut()
+    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce(makeFakeAccount())
+    const account = await sut.add(makeFakeAddAccount())
+    expect(account).toBeNull()
   })
 })
