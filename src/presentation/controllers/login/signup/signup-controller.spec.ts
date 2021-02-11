@@ -1,8 +1,8 @@
 import { IAccountModel, IAddAccount, IAddAccountModel, IValidation, IAuthentication, IAuthenticationModel } from './signup-controller-protocols'
 import { SignUpController } from './signup-controller'
-import { MissingParamError } from '../../errors'
-import { IHttpRequest } from '../../protocols'
-import { ok, badRequest, serverError, forbidden } from '../../helpers/http/http-helper'
+import { MissingParamError } from '../../../errors'
+import { IHttpRequest } from '../../../protocols'
+import { ok, badRequest, serverError, forbidden } from '../../../helpers/http/http-helper'
 
 const id = 'test.id'
 const name = 'Test User'

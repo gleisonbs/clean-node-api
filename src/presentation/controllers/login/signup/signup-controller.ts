@@ -1,6 +1,6 @@
-import { badRequest, serverError, ok, forbidden } from '../../helpers/http/http-helper'
+import { badRequest, serverError, ok, forbidden } from '../../../helpers/http/http-helper'
 import { IAddAccount, IController, IHttpRequest, IHttpResponse, IAuthentication } from './signup-controller-protocols'
-import { IValidation } from '../../protocols/validation'
+import { IValidation } from '../../../protocols/validation'
 
 export class SignUpController implements IController {
   constructor (private readonly addAccount: IAddAccount,
