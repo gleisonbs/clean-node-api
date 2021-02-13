@@ -8,6 +8,6 @@ export interface IAddSurveyModel {
 }
 
 interface ISurveyAnswer {
-  image: string
+  image?: string
   answer: string
 }
