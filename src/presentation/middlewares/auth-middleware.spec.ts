@@ -11,6 +11,12 @@ const makeFakeAccount = (): IAccountModel => ({
   password: 'test.password'
 })
 
+const makeFakeRequest = (): IHttpRequest => ({
+  headers: {
+    'x-access-token': 'test.token'
+  }
+})
+
 const makeLoadAccountByToken = (): ILoadAccountByToken => {
   class LoadAccountByTokenStub implements ILoadAccountByToken {
     async load (accessToken): Promise<IAccountModel | null> {
@@ -34,9 +40,8 @@ const makeSut = (): SutTypes => {
 describe('Auth Middleware', () => {
   it('Should return 403 if no x-access-token exists in headers', async () => {
     const { sut } = makeSut()
-    const httpRequest: IHttpRequest = {
-      headers: {}
-    }
+    const httpRequest: IHttpRequest = makeFakeRequest()
+    httpRequest.headers = {}
 
     const httpResponse: IHttpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(forbidden())
@@ -46,11 +51,7 @@ describe('Auth Middleware', () => {
     const { sut, loadAccountByToken } = makeSut()
     const loadSpy = jest.spyOn(loadAccountByToken, 'load')
 
-    const httpRequest: IHttpRequest = {
-      headers: {
-        'x-access-token': 'test.token'
-      }
-    }
+    const httpRequest: IHttpRequest = makeFakeRequest()
 
     await sut.handle(httpRequest)
     expect(loadSpy).toBeCalledWith('test.token')
