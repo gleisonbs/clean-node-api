@@ -20,10 +20,20 @@ const makeLoadAccountByToken = (): ILoadAccountByToken => {
   return new LoadAccountByTokenStub()
 }
 
+interface SutTypes {
+  loadAccountByToken: ILoadAccountByToken
+  sut: AuthMiddleware
+}
+
+const makeSut = (): SutTypes => {
+  const loadAccountByToken = makeLoadAccountByToken()
+  const sut = new AuthMiddleware(loadAccountByToken)
+  return { sut, loadAccountByToken }
+}
+
 describe('Auth Middleware', () => {
   it('Should return 403 if no x-access-token exists in headers', async () => {
-    const loadAccountByToken = makeLoadAccountByToken()
-    const sut = new AuthMiddleware(loadAccountByToken)
+    const { sut } = makeSut()
     const httpRequest: IHttpRequest = {
       headers: {}
     }
@@ -33,8 +43,7 @@ describe('Auth Middleware', () => {
   })
 
   it('Should call LoadAccountByToken with correct accessToken', async () => {
-    const loadAccountByToken = makeLoadAccountByToken()
-    const sut = new AuthMiddleware(loadAccountByToken)
+    const { sut, loadAccountByToken } = makeSut()
     const loadSpy = jest.spyOn(loadAccountByToken, 'load')
 
     const httpRequest: IHttpRequest = {
