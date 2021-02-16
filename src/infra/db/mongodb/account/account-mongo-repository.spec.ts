@@ -12,7 +12,7 @@ describe('Account Mongo Repository', () => {
   const email: string = 'test.user@email.com'
   const password: string = 'test.password'
   const accessToken: string = 'test.token'
-  const role: string = 'test.role'
+  const role: string = 'admin'
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL ?? '')
   })
@@ -89,6 +89,24 @@ describe('Account Mongo Repository', () => {
     await accountCollection.insertOne({ name, email, password, accessToken, role })
     const account = await sut.loadByToken(accessToken, role)
 
+    expect(account).toBeTruthy()
+    expect(account?.id).toBeTruthy()
+    expect(account?.name).toBe(name)
+    expect(account?.email).toBe(email)
+    expect(account?.password).toBe(password)
+  })
+
+  it('Should return null on loadByToken with invalid role', async () => {
+    const sut = makeSut()
+    await accountCollection.insertOne({ name, email, password, accessToken })
+    const account = await sut.loadByToken(accessToken, role)
+    expect(account).toBeFalsy()
+  })
+
+  it('Should return an account on loadByToken when user is admin', async () => {
+    const sut = makeSut()
+    await accountCollection.insertOne({ name, email, password, accessToken, role })
+    const account = await sut.loadByToken(accessToken)
     expect(account).toBeTruthy()
     expect(account?.id).toBeTruthy()
     expect(account?.name).toBe(name)
