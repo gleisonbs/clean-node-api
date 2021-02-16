@@ -11,6 +11,7 @@ describe('Account Mongo Repository', () => {
   const name: string = 'Test User'
   const email: string = 'test.user@email.com'
   const password: string = 'test.password'
+  const accessToken: string = 'test.token'
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL ?? '')
   })
@@ -66,5 +67,18 @@ describe('Account Mongo Repository', () => {
     const account = await accountCollection.findOne({ _id: fakeAccount._id })
     expect(account).toBeTruthy()
     expect(account?.accessToken).toBe('test.token')
+  })
+
+  it('Should return an account on loadByToken without role success', async () => {
+    const sut = makeSut()
+
+    await accountCollection.insertOne({ name, email, password, accessToken })
+    const account = await sut.loadByToken(accessToken)
+
+    expect(account).toBeTruthy()
+    expect(account?.id).toBeTruthy()
+    expect(account?.name).toBe(name)
+    expect(account?.email).toBe(email)
+    expect(account?.password).toBe(password)
   })
 })
