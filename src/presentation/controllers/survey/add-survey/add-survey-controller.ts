@@ -16,10 +16,11 @@ export class AddSurveyController implements IController {
         return badRequest(error)
       }
 
-      const { question, answers } = httpRequest.body
+      const { question, answers, date } = httpRequest.body
       await this.addSurvey.add({
         question,
-        answers
+        answers,
+        date
       })
       return noContent()
     } catch (err) {

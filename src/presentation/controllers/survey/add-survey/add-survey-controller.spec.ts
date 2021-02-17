@@ -4,12 +4,14 @@ import { IValidation } from '../../../protocols/validation'
 import { badRequest, serverError, noContent } from '../../../helpers/http/http-helper'
 import { IAddSurveyModel, IAddSurvey } from './add-survey-controller-protocols'
 
+const date = new Date()
 const makeFakeRequest = (): IHttpRequest => ({
   body: {
     question: 'test.question',
     answers: [
       { image: 'test.image', answer: 'test.answer' }
-    ]
+    ],
+    date
   }
 })
 
