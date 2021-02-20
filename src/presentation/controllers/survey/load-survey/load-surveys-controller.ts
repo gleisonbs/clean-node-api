@@ -1,6 +1,6 @@
 import { IController, IHttpRequest, IHttpResponse } from './load-surveys-controller-protocols'
 import { ILoadSurveys } from '../../../../domain/use-cases/load-surveys'
-import { ok, serverError } from '../../../helpers/http/http-helper'
+import { ok, serverError, noContent } from '../../../helpers/http/http-helper'
 
 export class LoadSurveysController implements IController {
   constructor (private readonly loadSurveys: ILoadSurveys) {
@@ -10,7 +10,7 @@ export class LoadSurveysController implements IController {
   async handle (httpRequest: IHttpRequest): Promise<IHttpResponse> {
     try {
       const surveys = await this.loadSurveys.load()
-      return ok(surveys)
+      return surveys?.length ? ok(surveys) : noContent()
     } catch (err) {
       return serverError(err)
     }
