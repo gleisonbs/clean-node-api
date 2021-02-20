@@ -8,7 +8,7 @@ export class LoadSurveysController implements IController {
   }
 
   async handle (httpRequest: IHttpRequest): Promise<IHttpResponse> {
-    await this.loadSurveys.load()
-    return ok({})
+    const surveys = await this.loadSurveys.load()
+    return ok(surveys)
   }
 }
