@@ -26,7 +26,7 @@ interface SutTypes {
 
 const makeLoadSurveysStub = (): ILoadSurveys => {
   class LoadSurveysStub implements ILoadSurveys {
-    async load (): Promise<ISurveyModel[] | null> {
+    async load (): Promise<ISurveyModel[]> {
       return makeFakeSurveys()
     }
   }

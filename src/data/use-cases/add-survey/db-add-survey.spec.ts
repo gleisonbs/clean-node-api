@@ -1,6 +1,7 @@
 import { DbAddSurvey } from './db-add-survey'
 import { IAddSurveyModel, IAddSurveyRepository } from './db-add-survey-protocols'
 
+const date = new Date()
 const makeFakeSurveyData = (): IAddSurveyModel => ({
   question: 'test.question',
   answers: [
@@ -8,8 +9,8 @@ const makeFakeSurveyData = (): IAddSurveyModel => ({
       image: 'test.image',
       answer: 'test.answer'
     }
-  ]
-
+  ],
+  date
 })
 
 interface SutTypes {
