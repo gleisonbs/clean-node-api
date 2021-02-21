@@ -13,7 +13,7 @@ describe('Login Routes', () => {
   })
 
   beforeEach(async () => {
-    surveyCollection = await MongoHelper.getCollection('survey')
+    surveyCollection = await MongoHelper.getCollection('surveys')
     await surveyCollection.deleteMany({})
 
     accountCollection = await MongoHelper.getCollection('accounts')
@@ -86,6 +86,32 @@ describe('Login Routes', () => {
       await request(app).get('/api/surveys')
         .send()
         .expect(403)
+    })
+
+    it('Should return 204 on load surveys with valid accessToken', async () => {
+      accountCollection = await MongoHelper.getCollection('accounts')
+
+      const res = await accountCollection.insertOne({
+        name: 'test.user',
+        email: 'test.user@email.com',
+        password: '123'
+      })
+
+      const id = res.ops[0]._id
+      const accessToken = sign({ id }, env.jwt_secret)
+
+      await accountCollection.updateOne({
+        _id: id
+      }, {
+        $set: {
+          accessToken
+        }
+      })
+
+      await request(app).get('/api/surveys')
+        .set('x-access-token', accessToken)
+        .send()
+        .expect(204)
     })
   })
 })
